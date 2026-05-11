@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#2d5a1b"/>
+<title>AgroFresh – India's Freshness, Riyadh's Heart</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --ink:#1c3a10;
+  --forest:#2d5a1b;
+  --leaf:#4c901e;
+  --sage:#6a9f34;
+  --mint:#eaf2d7;
+  --gold:#c79c36;
+  --gold-light:#e8c456;
+  --gold-pale:#faf6e4;
+  --cream:#f7faf2;
+  --white:#ffffff;
+  --gray:#6b7280;
+  --gray-light:#eff4e8;
+  --card-shadow:0 2px 16px rgba(29,60,12,.10);
+  --radius-lg:20px;
+  --radius-xl:28px;
+  --radius-full:999px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden;padding-bottom:80px;}
+
+/* ─── LOGO IMAGES ─── */
+.nav-logo-img{
+  height:42px;width:auto;
+  border-radius:10px;
+  background:#fff;
+  display:block;
+  object-fit:contain;
+}
+.ft-logo-img{
+  height:72px;width:auto;
+  border-radius:14px;
+  background:#fff;
+  display:block;
+  margin:0 auto 14px;
+  object-fit:contain;
+  padding:4px 8px;
+}
+
+/* ─── TOP BAR ─── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(29,56,14,.97);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;
+  border-bottom:1px solid rgba(199,156,54,.15);
+}
+.topbar-brand{display:flex;align-items:center;gap:10px;}
+.logo-mark{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,var(--leaf),var(--sage));
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.brand-name{font-family:'Fraunces',serif;font-weight:900;font-size:1.2rem;color:#fff;letter-spacing:-.3px;}
+.brand-name em{color:var(--gold);font-style:normal;}
+.topbar-actions{display:flex;gap:8px;}
+.btn-export{
+  display:flex;align-items:center;gap:6px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--ink);
+  border:none;border-radius:var(--radius-full);
+  padding:9px 16px;font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.8rem;font-weight:700;cursor:pointer;
+  transition:transform .15s,opacity .15s;
+  white-space:nowrap;
+}
+.btn-export:active{transform:scale(.96);opacity:.85;}
+.btn-export svg{width:16px;height:16px;flex-shrink:0;}
+
+/* ─── HERO ─── */
+.hero{
+  min-height:88svh;
+  background:linear-gradient(160deg,#152a09 0%,#2d5a1b 45%,#3d7a22 80%,#1c3a10 100%);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 0 44px;
+}
+.hero-art{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 10% 30%,rgba(199,156,54,.12) 0%,transparent 55%),
+    radial-gradient(ellipse at 90% 60%,rgba(106,159,52,.10) 0%,transparent 50%);
+}
+.hero-deco{
+  position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='60' cy='60' r='50' fill='none' stroke='rgba(255,255,255,.025)' stroke-width='1'/%3E%3C/svg%3E");
+  background-size:120px 120px;
+}
+.hero-badge{
+  position:relative;z-index:2;
+  align-self:flex-start;margin:0 20px 24px;
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(199,156,54,.15);
+  border:1px solid rgba(199,156,54,.35);
+  border-radius:var(--radius-full);
+  padding:7px 14px;
+  font-size:.78rem;font-weight:600;color:var(--gold);letter-spacing:.5px;
+}
+.hero-content{position:relative;z-index:2;padding:0 20px;}
+.hero-kicker{font-family:'Fraunces',serif;font-style:italic;font-size:.95rem;color:rgba(255,255,255,.55);margin-bottom:10px;letter-spacing:.5px;}
+.hero-title{
+  font-family:'Fraunces',serif;font-weight:900;
+  font-size:clamp(2.2rem,8vw,3.4rem);
+  line-height:1.08;color:#fff;margin-bottom:14px;
+  letter-spacing:-.5px;
+}
+.hero-title em{color:var(--gold);font-style:normal;}
+.hero-desc{font-size:.95rem;color:rgba(255,255,255,.65);line-height:1.75;max-width:360px;margin-bottom:28px;font-weight:300;}
+.hero-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:var(--radius-full);
+  padding:7px 14px;font-size:.78rem;font-weight:500;color:rgba(255,255,255,.8);
+}
+
+/* ─── SECTION ─── */
+.section{padding:44px 20px 0;}
+.sec-label{font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.sec-title{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(1.6rem,5vw,2.2rem);line-height:1.15;color:var(--ink);margin-bottom:12px;}
+.sec-title em{color:var(--leaf);font-style:normal;}
+.sec-rule{width:36px;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:2px;margin-bottom:20px;}
+
+/* ─── STATS ROW ─── */
+.stats-row{
+  margin-top:32px;
+  display:grid;grid-template-columns:repeat(2,1fr);gap:12px;
+}
+.stat-card{
+  background:linear-gradient(135deg,var(--forest),#3d7220);
+  border-radius:var(--radius-lg);
+  padding:20px 16px;
+  text-align:center;
+}
+.stat-num{font-family:'Fraunces',serif;font-weight:900;font-size:2rem;color:var(--gold);line-height:1;}
+.stat-lbl{font-size:.72rem;color:rgba(255,255,255,.6);font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-top:4px;}
+
+/* ─── ABOUT CARD ─── */
+.about-img{
+  width:100%;aspect-ratio:16/9;object-fit:cover;
+  border-radius:var(--radius-xl);
+  box-shadow:var(--card-shadow);
+  display:block;margin-bottom:24px;
+}
+.mv-stack{display:flex;flex-direction:column;gap:12px;margin-top:8px;}
+.mv-card{border-radius:var(--radius-lg);padding:20px;}
+.mv-card.m{background:linear-gradient(135deg,var(--forest),var(--leaf));color:#fff;}
+.mv-card.v{background:var(--white);border:1.5px solid var(--mint);color:var(--ink);}
+.mv-icon-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.mv-icon{font-size:1.2rem;}
+.mv-ttl{font-family:'Fraunces',serif;font-weight:700;font-size:1rem;}
+.mv-card.m .mv-ttl{color:var(--gold);}
+.mv-card.v .mv-ttl{color:var(--forest);}
+.mv-txt{font-size:.87rem;line-height:1.75;opacity:.85;}
+
+.values{margin-top:20px;display:flex;flex-direction:column;gap:12px;}
+.val{display:flex;gap:12px;align-items:flex-start;}
+.val-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:6px;}
+.val-txt{font-size:.87rem;color:#444;line-height:1.7;}
+
+/* ─── QUOTES ─── */
+.quotes-section{
+  margin-top:44px;
+  background:var(--forest);
+  padding:44px 20px;
+  position:relative;overflow:hidden;
+}
+.quotes-section::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(245,166,35,.06) 0%,transparent 70%);
+}
+.quotes-section .sec-title{color:#fff;}
+.quotes-section em{color:var(--gold) !important;}
+.quotes-grid{display:flex;flex-direction:column;gap:16px;margin-top:24px;}
+.q-card{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(199,156,54,.22);
+  border-radius:var(--radius-lg);
+  padding:24px 20px;
+  position:relative;
+}
+.q-mark{font-family:'Fraunces',serif;font-size:3.5rem;line-height:.5;color:var(--gold);display:block;margin-bottom:12px;}
+.q-text{font-family:'Fraunces',serif;font-style:italic;font-size:.97rem;color:rgba(255,255,255,.88);line-height:1.8;margin-bottom:16px;}
+.q-author{font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);}
+
+/* ─── PRODUCTS ─── */
+.products-section{padding:44px 20px 0;}
+.filter-scroll{
+  display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  margin:20px -20px 24px;padding-left:20px;padding-right:20px;
+}
+.filter-scroll::-webkit-scrollbar{display:none;}
+.f-btn{
+  flex-shrink:0;
+  padding:9px 18px;border-radius:var(--radius-full);
+  border:1.5px solid var(--leaf);background:transparent;
+  color:var(--leaf);font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;
+  white-space:nowrap;
+}
+.f-btn.active,.f-btn:active{background:linear-gradient(135deg,var(--leaf),var(--sage));color:#fff;}
+.products-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:12px;
+}
+.p-card{
+  background:var(--white);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  box-shadow:var(--card-shadow);
+  transition:transform .2s;
+}
+.p-card:active{transform:scale(.97);}
+.p-img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--mint);display:block;}
+.p-body{padding:12px 12px 14px;}
+.p-cat{font-size:.67rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:3px;}
+.p-name{font-family:'Fraunces',serif;font-weight:700;font-size:1rem;color:var(--ink);margin-bottom:2px;line-height:1.2;}
+.p-hindi{font-size:.72rem;color:var(--gray);margin-bottom:8px;}
+.p-tag{
+  display:inline-block;background:var(--mint);
+  color:var(--leaf);border-radius:var(--radius-full);
+  padding:3px 10px;font-size:.68rem;font-weight:700;
+}
+
+/* ─── CONTACT ─── */
+.contact-section{padding:44px 20px 0;}
+.contact-grid{display:flex;flex-direction:column;gap:12px;margin-top:20px;}
+.c-row{
+  display:flex;align-items:flex-start;gap:14px;
+  background:var(--white);border-radius:var(--radius-lg);
+  padding:16px;box-shadow:var(--card-shadow);
+}
+.c-icon{
+  width:42px;height:42px;border-radius:11px;
+  background:linear-gradient(135deg,var(--leaf),var(--sage));display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;flex-shrink:0;
+}
+.c-lbl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray);margin-bottom:2px;}
+.c-val{font-size:.92rem;font-weight:600;color:var(--forest);}
+.map-wrap{
+  margin-top:16px;border-radius:var(--radius-xl);overflow:hidden;
+  box-shadow:var(--card-shadow);height:280px;
+}
+.map-wrap iframe{width:100%;height:100%;border:none;display:block;}
+
+/* ─── WHATSAPP FLOAT ─── */
+.wa-btn{
+  position:fixed;bottom:88px;right:18px;z-index:300;
+  width:52px;height:52px;border-radius:50%;
+  background:#25D366;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(37,211,102,.45);
+  text-decoration:none;font-size:1.5rem;
+  transition:transform .15s;
+}
+.wa-btn:active{transform:scale(.92);}
+
+/* ─── BOTTOM NAV ─── */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(29,56,14,.97);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.08);
+  display:flex;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.bn-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:10px 4px;gap:3px;
+  text-decoration:none;
+  color:rgba(255,255,255,.45);
+  font-size:.64rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase;
+  transition:color .2s;
+}
+.bn-item.active,.bn-item:active{color:var(--gold);}
+.bn-icon{font-size:1.25rem;line-height:1;}
+
+/* ─── FOOTER ─── */
+footer{
+  background:linear-gradient(160deg,#152a09,#2d5a1b);
+  padding:32px 20px 20px;
+  margin-top:44px;
+  text-align:center;
+}
+.ft-brand{font-family:'Fraunces',serif;font-weight:900;font-size:1.4rem;color:#fff;margin-bottom:8px;}
+.ft-brand em{color:var(--gold);font-style:normal;}
+.ft-sub{font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:20px;}
+.ft-copy{font-size:.72rem;color:rgba(255,255,255,.3);border-top:1px solid rgba(255,255,255,.08);padding-top:16px;}
+
+/* ─── REVEAL ─── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.on{opacity:1;transform:none;}
+
+/* ─── PDF LOADING OVERLAY ─── */
+#pdf-overlay{
+  display:none;position:fixed;inset:0;z-index:999;
+  background:rgba(10,36,16,.85);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;flex-direction:column;gap:16px;
+}
+#pdf-overlay.show{display:flex;}
+.pdf-spinner{
+  width:48px;height:48px;border:3px solid rgba(245,166,35,.2);
+  border-top-color:var(--gold);border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.pdf-msg{font-size:.9rem;color:rgba(255,255,255,.8);font-weight:500;}
+</style>
+</head>
+<body>
+
+<!-- PDF LOADING -->
+<div id="pdf-overlay">
+  <div class="pdf-spinner"></div>
+  <p class="pdf-msg">Generating your PDF…</p>
+</div>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <img id="nav-logo" class="nav-logo-img" alt="AgroFresh"/>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn-export" onclick="exportPDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Export PDF
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-art"></div>
+  <div class="hero-deco"></div>
+  <div class="hero-badge">✦ Straight from India's Farms</div>
+  <div class="hero-content">
+    <p class="hero-kicker">Riyadh's Premier Source</p>
+    <h1 class="hero-title">Freshest<br/><em>Indian</em><br/>Vegetables</h1>
+    <p class="hero-desc">From fertile Indian farms to Azizia, Riyadh — every delivery bursting with authentic flavour and nutrition.</p>
+    <div class="hero-chips">
+      <span class="chip">🌱 100% Farm Fresh</span>
+      <span class="chip">📍 Azizia, Riyadh</span>
+      <span class="chip">🇮🇳 Authentic Produce</span>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="section reveal" style="padding-top:32px;">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num">15+</div><div class="stat-lbl">Years of Excellence</div></div>
+    <div class="stat-card"><div class="stat-num">50+</div><div class="stat-lbl">Varieties</div></div>
+    <div class="stat-card"><div class="stat-num">500+</div><div class="stat-lbl">Daily Customers</div></div>
+    <div class="stat-card"><div class="stat-num">100%</div><div class="stat-lbl">Freshness</div></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="section reveal" id="about">
+  <p class="sec-label">Who We Are</p>
+  <h2 class="sec-title">Bridging India's<br/><em>Harvest</em> with Riyadh</h2>
+  <div class="sec-rule"></div>
+  <img class="about-img" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80" alt="Fresh vegetables market"/>
+  <p style="font-size:.9rem;color:#555;line-height:1.8;">AgroFresh is Saudi Arabia's premier importer of authentic Indian vegetables. Based in <strong>Azizia, Riyadh</strong>, we deliver the tastes and nutrition of India's finest produce daily.</p>
+
+  <div class="mv-stack">
+    <div class="mv-card m">
+      <div class="mv-icon-row"><span class="mv-icon">🎯</span><span class="mv-ttl">Our Mission</span></div>
+      <p class="mv-txt">Deliver the freshest Indian vegetables to every household and restaurant in Saudi Arabia — maintaining authentic taste of home.</p>
+    </div>
+    <div class="mv-card v">
+      <div class="mv-icon-row"><span class="mv-icon">🌟</span><span class="mv-ttl">Our Vision</span></div>
+      <p class="mv-txt">Become the most trusted name in fresh Indian produce across the GCC — connecting Indian farmers with the Saudi community.</p>
+    </div>
+  </div>
+
+  <div class="values">
+    <div class="val"><div class="val-dot"></div><p class="val-txt"><strong>Farm-to-Table Integrity</strong> — Direct sourcing from trusted Indian farms, zero compromise on quality.</p></div>
+    <div class="val"><div class="val-dot"></div><p class="val-txt"><strong>Daily Fresh Arrivals</strong> — Cold-chain logistics guarantees freshness from harvest to plate.</p></div>
+    <div class="val"><div class="val-dot"></div><p class="val-txt"><strong>Community Commitment</strong> — Proudly serving Riyadh's Indian community with the tastes of home.</p></div>
+  </div>
+</section>
+
+<!-- QUOTES -->
+<div class="quotes-section reveal" id="values">
+  <p class="sec-label" style="color:var(--gold);">Words to Live By</p>
+  <h2 class="sec-title">The Philosophy of <em>Freshness</em></h2>
+  <div class="sec-rule" style="background:linear-gradient(90deg,var(--gold),var(--gold-light,#fff));"></div>
+  <div class="quotes-grid">
+    <div class="q-card"><span class="q-mark">"</span><p class="q-text">Let food be thy medicine. Every vegetable is nature's gift — we simply deliver it at its finest.</p><div class="q-author">— Our Founding Belief</div></div>
+    <div class="q-card"><span class="q-mark">"</span><p class="q-text">A nation that grows together, eats together. AgroFresh connects India's fields with Riyadh's families.</p><div class="q-author">— AgroFresh Vision</div></div>
+    <div class="q-card"><span class="q-mark">"</span><p class="q-text">Great cooking begins with the freshest ingredient. We guard that freshness with our name.</p><div class="q-author">— AgroFresh Promise</div></div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section class="products-section reveal" id="products">
+  <p class="sec-label">Our Selection</p>
+  <h2 class="sec-title">Premium Indian<br/><em>Vegetables</em></h2>
+  <div class="sec-rule"></div>
+  <p style="font-size:.87rem;color:var(--gray);line-height:1.7;">Handpicked, quality-inspected & cold-stored to preserve authentic taste.</p>
+
+  <div class="filter-scroll" id="filter-bar">
+    <button class="f-btn active" onclick="filter('all',this)">All</button>
+    <button class="f-btn" onclick="filter('gourd',this)">Gourds</button>
+    <button class="f-btn" onclick="filter('leafy',this)">Leafy Greens</button>
+    <button class="f-btn" onclick="filter('spice',this)">Spice & Herb</button>
+    <button class="f-btn" onclick="filter('root',this)">Root & Fruit</button>
+  </div>
+  <div class="products-grid" id="pgrid"></div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section reveal" id="contact">
+  <p class="sec-label">Find Us</p>
+  <h2 class="sec-title">Visit Us at<br/><em>Azizia</em></h2>
+  <div class="sec-rule"></div>
+  <div class="contact-grid">
+    <div class="c-row"><div class="c-icon">📍</div><div><div class="c-lbl">Address</div><div class="c-val">Azizia Vegetable Market, Riyadh, KSA</div></div></div>
+    <div class="c-row"><div class="c-icon">🕗</div><div><div class="c-lbl">Hours</div><div class="c-val">Sat–Thu: 5:00 AM – 10:00 PM</div></div></div>
+    <div class="c-row"><div class="c-icon">🌿</div><div><div class="c-lbl">Speciality</div><div class="c-val">Authentic Indian Vegetables & Herbs</div></div></div>
+    <div class="c-row"><div class="c-icon">🚚</div><div><div class="c-lbl">Supply</div><div class="c-val">Wholesale & Retail — Restaurants Welcome</div></div></div>
+  </div>
+  <div class="map-wrap">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3624.6!2d46.7219!3d24.6749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f01e6be89b9ef%3A0x3b6e4b0a8!2sAzizia%20Market%2C%20Riyadh!5e0!3m2!1sen!2ssa!4v1" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <img id="footer-logo" class="ft-logo-img" alt="AgroFresh"/>
+  <p class="ft-sub">Saudi Arabia's leading importer of authentic Indian vegetables.<br/>Freshness guaranteed, tradition preserved.</p>
+  <div class="ft-copy">© 2025 AgroFresh · Azizia Market, Riyadh · <span style="color:var(--gold);">Bringing India's Freshness to Your Table</span></div>
+</footer>
+
+<!-- WhatsApp -->
+<a class="wa-btn" href="https://wa.me/966500000000" target="_blank" title="WhatsApp Us">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a class="bn-item active" href="#home"><span class="bn-icon">🏠</span>Home</a>
+  <a class="bn-item" href="#about"><span class="bn-icon">🌿</span>About</a>
+  <a class="bn-item" href="#products"><span class="bn-icon">🥬</span>Products</a>
+  <a class="bn-item" href="#contact"><span class="bn-icon">📍</span>Contact</a>
+</nav>
+
+<script>
+/* ── Logo (base64 embedded) ── */
+const LOGO_B64='data:image/jpeg;base64,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';
+
+/* ── Product Data ── */
+const products=[
+  {name:'Bitter Gourd',hindi:'करेला — Karela',cat:'gourd',catLabel:'Gourd',tag:'Rich in Antioxidants',img:'https://images.unsplash.com/photo-1574316535581-be6e5e0e1e72?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Okra / Lady Finger',hindi:'भिंडी — Bhindi',cat:'root',catLabel:'Vegetable',tag:'High in Fibre',img:'https://images.unsplash.com/photo-1599946347371-68eb71b16afc?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Eggplant',hindi:'बैंगन — Brinjal',cat:'root',catLabel:'Fruit Vegetable',tag:'Rich in Vitamins',img:'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Spinach',hindi:'पालक — Palak',cat:'leafy',catLabel:'Leafy Green',tag:'Iron Powerhouse',img:'https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Drumstick',hindi:'सहजन — Moringa',cat:'gourd',catLabel:'Pod Vegetable',tag:'Super Nutritious',img:'https://images.unsplash.com/photo-1601648764658-cf37e8c89b70?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Green Chilli',hindi:'हरी मिर्च — Hari Mirch',cat:'spice',catLabel:'Spice',tag:'Natural Heat',img:'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Fenugreek Leaves',hindi:'मेथी — Methi',cat:'leafy',catLabel:'Leafy Herb',tag:'Aromatic & Healing',img:'https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Bottle Gourd',hindi:'लौकी — Lauki',cat:'gourd',catLabel:'Gourd',tag:'Low Calorie',img:'https://images.unsplash.com/photo-1506484381205-f7945653044d?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Tomato',hindi:'टमाटर — Tamatar',cat:'root',catLabel:'Fruit Vegetable',tag:'Lycopene Rich',img:'https://images.unsplash.com/photo-1546094096-0df4bcabd337?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Fresh Coriander',hindi:'धनिया — Dhaniya',cat:'spice',catLabel:'Fresh Herb',tag:'Cooling & Fragrant',img:'https://images.unsplash.com/photo-1615485500704-8e990f9900f7?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Capsicum',hindi:'शिमला मिर्च — Shimla Mirch',cat:'root',catLabel:'Fruit Vegetable',tag:'Vitamin C Boost',img:'https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Cluster Beans',hindi:'गवार — Gavar',cat:'gourd',catLabel:'Bean Pod',tag:'High Protein',img:'https://images.unsplash.com/photo-1519996529931-28324d5a630e?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Curry Leaves',hindi:'करी पत्ता — Kadi Patta',cat:'spice',catLabel:'Aromatic Herb',tag:'Essential Flavour',img:'https://images.unsplash.com/photo-1597362925123-77861d3fbac7?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Ridge Gourd',hindi:'तोरई — Turai',cat:'gourd',catLabel:'Gourd',tag:'Light & Digestive',img:'https://images.unsplash.com/photo-1617197714379-ec428c2b3c0e?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Dill Leaves',hindi:'सुवा भाजी — Suva',cat:'leafy',catLabel:'Leafy Herb',tag:'Fresh & Aromatic',img:'https://images.unsplash.com/photo-1529543544282-ea669407fca3?auto=format&fit=crop&w=400&h=300&q=80'},
+  {name:'Raw Banana',hindi:'कच्चा केला — Kacha Kela',cat:'root',catLabel:'Starchy Vegetable',tag:'Energy Giving',img:'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&w=400&h=300&q=80'}
+];
+
+function renderProducts(cat){
+  const g=document.getElementById('pgrid');
+  const list=cat==='all'?products:products.filter(p=>p.cat===cat);
+  g.innerHTML=list.map(p=>`
+    <div class="p-card">
+      <img class="p-img" src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80'"/>
+      <div class="p-body">
+        <div class="p-cat">${p.catLabel}</div>
+        <div class="p-name">${p.name}</div>
+        <div class="p-hindi">${p.hindi}</div>
+        <span class="p-tag">✦ ${p.tag}</span>
+      </div>
+    </div>`).join('');
+}
+
+function filter(cat,btn){
+  document.querySelectorAll('.f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts(cat);
+}
+
+/* ── Scroll Reveal ── */
+const revealObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');revealObs.unobserve(e.target);}});
+},{threshold:.1});
+function initReveal(){document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));}
+
+/* ── Active nav ── */
+const sections=['home','about','products','contact'];
+const navLinks=document.querySelectorAll('.bn-item');
+window.addEventListener('scroll',()=>{
+  let current='home';
+  sections.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&window.scrollY>=el.offsetTop-120)current=id;
+  });
+  navLinks.forEach(a=>{
+    a.classList.toggle('active',a.getAttribute('href')==='#'+current);
+  });
+},{ passive:true });
+
+/* ── PDF Export ── */
+async function exportPDF(){
+  const overlay=document.getElementById('pdf-overlay');
+  overlay.classList.add('show');
+  await new Promise(r=>setTimeout(r,80));
+
+  try{
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=210,H=297;
+    const GR=[45,90,27],GOLD=[199,156,54],WHITE=[255,255,255],CREAM=[247,250,242];
+
+    /* ── Cover Page ── */
+    doc.setFillColor(...GR);
+    doc.rect(0,0,W,H,'F');
+    // Decorative circle
+    doc.setDrawColor(255,255,255);
+    doc.setLineWidth(.3);
+    doc.circle(W-30,30,50,'S');
+    doc.circle(W-30,30,38,'S');
+    // Gold accent bar
+    doc.setFillColor(...GOLD);
+    doc.rect(0,0,6,H,'F');
+    // Logo on cover
+    doc.addImage(LOGO_B64,'JPEG',22,24,55,22);
+    // Company name text (right of logo)
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(32);
+    doc.setTextColor(...WHITE);
+    doc.text('Agro',84,42);
+    doc.setTextColor(...GOLD);
+    doc.text('Fresh',84+doc.getTextWidth('Agro')+1,42);
+    // Tagline
+    doc.setFont('helvetica','italic');
+    doc.setFontSize(13);
+    doc.setTextColor(200,220,200);
+    doc.text("India's Freshness — Riyadh's Heart",22,83);
+    // Divider
+    doc.setDrawColor(...GOLD);
+    doc.setLineWidth(.8);
+    doc.line(22,90,W-22,90);
+    // Description
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(10);
+    doc.setTextColor(180,210,185);
+    const descLines=doc.splitTextToSize("AgroFresh is Saudi Arabia's premier importer and distributor of authentic Indian vegetables. Based in Azizia, Riyadh, we bring the tastes, textures, and nutrition of India's finest produce directly to your table — every single day.",W-44);
+    doc.text(descLines,22,100);
+    // Stats
+    const stats=[['15+','Years of Excellence'],['50+','Vegetable Varieties'],['500+','Daily Customers'],['100%','Freshness Guaranteed']];
+    stats.forEach((s,i)=>{
+      const x=22+(i%2)*94, y=135+Math.floor(i/2)*28;
+      doc.setFillColor(40,80,22);
+      doc.roundedRect(x,y,86,22,4,4,'F');
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(16);
+      doc.setTextColor(...GOLD);
+      doc.text(s[0],x+10,y+13);
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(8);
+      doc.setTextColor(180,210,185);
+      doc.text(s[1],x+10,y+19);
+    });
+    // Mission & Vision
+    doc.setFillColor(35,72,18);
+    doc.roundedRect(22,200,W-44,32,5,5,'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...GOLD);
+    doc.text('OUR MISSION',28,210);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...WHITE);
+    const mLines=doc.splitTextToSize('Deliver the freshest, highest-quality Indian vegetables to every household and restaurant in Saudi Arabia — maintaining the authentic taste of home.',80);
+    doc.text(mLines,28,216);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...GOLD);
+    doc.text('OUR VISION',W/2+6,210);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...WHITE);
+    const vLines=doc.splitTextToSize('Become the most trusted name in fresh Indian produce across the GCC — connecting Indian farmers with the Saudi community.',72);
+    doc.text(vLines,W/2+6,216);
+    // Footer bar
+    doc.setFillColor(20,48,10);
+    doc.rect(0,H-18,W,18,'F');
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...GOLD);
+    doc.text('AgroFresh  |  Azizia, Riyadh, Saudi Arabia  |  Wholesale & Retail',W/2,H-7,{align:'center'});
+
+    /* ── Page 2: Product Catalogue ── */
+    doc.addPage();
+    // Header
+    doc.setFillColor(45,90,27);
+    doc.rect(0,0,W,24,'F');
+    doc.setFillColor(...GOLD);
+    doc.rect(0,0,6,24,'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(14);
+    doc.setTextColor(...WHITE);
+    doc.text('Product Catalogue',14,16);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(180,220,185);
+    doc.text('Premium Indian Vegetables — Handpicked & Cold-Stored',W-14,16,{align:'right'});
+
+    // Table
+    const cols=[['PRODUCT','LOCAL NAME','CATEGORY','BENEFIT']];
+    const rows=products.map(p=>[p.name,(p.hindi.split('\u2014')[1]||p.hindi.split('-')[1]||p.hindi).trim(),p.catLabel,p.tag]);
+    const allRows=[...cols,...rows];
+    const colWidths=[54,50,38,46],startX=12,rowH=8;
+    let yy=34;
+    allRows.forEach((row,ri)=>{
+      const isHeader=ri===0;
+      const isEven=ri%2===0;
+      if(isHeader){
+        doc.setFillColor(...GR);
+      } else if(isEven){
+        doc.setFillColor(237,245,224);
+      } else {
+        doc.setFillColor(...CREAM);
+      }
+      doc.rect(startX,yy,W-24,rowH,'F');
+      doc.setFont('helvetica', isHeader?'bold':'normal');
+      doc.setFontSize(isHeader?8:7.5);
+      doc.setTextColor(isHeader?255:50, isHeader?255:60, isHeader?255:50);
+      let xx=startX+3;
+      row.forEach((cell,ci)=>{
+        doc.text(String(cell),xx,yy+5.5,{maxWidth:colWidths[ci]-4});
+        xx+=colWidths[ci];
+      });
+      yy+=rowH;
+      if(yy>H-20){
+        doc.addPage();
+        // mini header
+        doc.setFillColor(...GR);
+        doc.rect(0,0,W,14,'F');
+        doc.setFillColor(...GOLD);
+        doc.rect(0,0,6,14,'F');
+        doc.setFont('helvetica','bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...WHITE);
+        doc.text('Product Catalogue (cont.)',14,10);
+        yy=22;
+      }
+    });
+
+    /* ── Page 3: Contact ── */
+    doc.addPage();
+    doc.setFillColor(...GR);
+    doc.rect(0,0,W,H,'F');
+    doc.setFillColor(...GOLD);
+    doc.rect(0,0,6,H,'F');
+    // Logo on contact page
+    doc.addImage(LOGO_B64,'JPEG',22,20,50,20);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(28);
+    doc.setTextColor(...WHITE);
+    doc.text('Contact & Location',22,56);
+    doc.setDrawColor(...GOLD);
+    doc.setLineWidth(.8);
+    doc.line(22,56,W-22,56);
+    // Contact details
+    const contacts=[
+      ['Address','Azizia, Riyadh, Saudi Arabia'],
+      ['Market Hours','Saturday - Thursday: 5:00 AM - 10:00 PM'],
+      ['Speciality','Authentic Indian Vegetables & Fresh Herbs'],
+      ['Supply','Wholesale & Retail - Restaurants Welcome'],
+    ];
+    let cy=72;
+    contacts.forEach(([lbl,val])=>{
+      doc.setFillColor(35,72,18);
+      doc.roundedRect(22,cy,W-44,20,4,4,'F');
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(9);
+      doc.setTextColor(...GOLD);
+      doc.text(lbl,30,cy+9);
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(9);
+      doc.setTextColor(...WHITE);
+      doc.text(val,30,cy+16);
+      cy+=26;
+    });
+    // Quotes
+    const quotes=[
+      '"Let food be thy medicine. Every vegetable is nature\'s gift — we deliver it at its finest."',
+      '"Great cooking begins with the freshest ingredient. We guard that freshness with our name."'
+    ];
+    cy+=10;
+    quotes.forEach(q=>{
+      doc.setFont('helvetica','italic');
+      doc.setFontSize(10);
+      doc.setTextColor(...GOLD);
+      const qLines=doc.splitTextToSize(q,W-50);
+      doc.text(qLines,W/2,cy,{align:'center'});
+      cy+=qLines.length*7+10;
+    });
+    // Footer
+    doc.setFillColor(20,48,10);
+    doc.rect(0,H-18,W,18,'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...GOLD);
+    doc.text('AgroFresh — Bringing India\'s Freshness to Your Table',W/2,H-7,{align:'center'});
+
+    doc.save('AgroFresh-Business-Profile.pdf');
+  } catch(err){
+    alert('PDF generation failed. Please try again.\n'+err.message);
+    console.error(err);
+  }
+  overlay.classList.remove('show');
+}
+
+/* ── Init ── */
+window.addEventListener('load',()=>{
+  document.getElementById('nav-logo').src=LOGO_B64;
+  document.getElementById('footer-logo').src=LOGO_B64;
+  renderProducts('all');
+  initReveal();
+});
+</script>
+</body>
+</html>
