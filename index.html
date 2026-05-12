@@ -346,6 +346,8 @@ footer{
   <div class="c-cards">
     <div class="c-card"><div class="c-icon">&#128205;</div><div><div class="c-lbl">Address</div><div class="c-val">Azizia Vegetable Market, Riyadh, KSA</div></div></div>
     <div class="c-card"><div class="c-icon">&#128222;</div><div><div class="c-lbl">Phone / WhatsApp</div><div class="c-val"><a href="tel:+966538916564">+966 538 916 564</a></div></div></div>
+    <div class="c-card"><div class="c-icon">&#128140;</div><div><div class="c-lbl">Email</div><div class="c-val"><a href="mailto:agrofreshriyadh@gmail.com">agrofreshriyadh@gmail.com</a></div></div></div>
+    <div class="c-card"><div class="c-icon">&#127760;</div><div><div class="c-lbl">Website</div><div class="c-val"><a href="http://www.agrofreshs.com" target="_blank">www.agrofreshs.com</a></div></div></div>
     <div class="c-card"><div class="c-icon">&#128343;</div><div><div class="c-lbl">Hours</div><div class="c-val">Sat – Thu: 5:00 AM – 10:00 PM</div></div></div>
     <div class="c-card"><div class="c-icon">&#127807;</div><div><div class="c-lbl">Speciality</div><div class="c-val">Authentic Indian Vegetables &amp; Herbs</div></div></div>
     <div class="c-card"><div class="c-icon">&#128666;</div><div><div class="c-lbl">Supply</div><div class="c-val">Wholesale &amp; Retail — Restaurants Welcome</div></div></div>
@@ -461,100 +463,192 @@ window.addEventListener("scroll", function() {
 }, {passive: true});
 
 /* PDF Export */
+function loadUrlImages(prods, callback) {
+  var urlProds = prods.filter(function(p){ return p.img.indexOf('http') === 0; });
+  var cache = {};
+  var done = 0;
+  if (urlProds.length === 0) { callback(cache); return; }
+  urlProds.forEach(function(p) {
+    var im = new Image();
+    im.crossOrigin = "anonymous";
+    im.onload = function() {
+      try {
+        var cv = document.createElement('canvas');
+        cv.width = im.width; cv.height = im.height;
+        cv.getContext('2d').drawImage(im, 0, 0);
+        cache[p.img] = cv.toDataURL('image/jpeg', 0.92);
+      } catch(e) {}
+      done++; if (done === urlProds.length) callback(cache);
+    };
+    im.onerror = function(){ done++; if (done === urlProds.length) callback(cache); };
+    im.src = p.img;
+  });
+}
+
 function exportPDF() {
   var ov = document.getElementById("pdf-ov");
   ov.classList.add("show");
-  setTimeout(function() {
-    try {
-      var doc = new window.jspdf.jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
-      var W = 210, H = 297;
-      var GR = [28,58,16], GOLD = [199,156,54], WHITE = [255,255,255];
+  loadUrlImages(products, function(imgCache) {
+    setTimeout(function() {
+      try {
+        var doc = new window.jspdf.jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+        var W = 210, H = 297;
+        var GR = [28,58,16], GOLD = [199,156,54], WHITE = [255,255,255];
 
-      /* Cover */
-      doc.setFillColor(GR[0],GR[1],GR[2]); doc.rect(0,0,W,H,"F");
-      doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]); doc.rect(0,0,6,H,"F");
-      doc.addImage(LOGO,"JPEG",18,20,60,24);
-      doc.setFont("helvetica","bold"); doc.setFontSize(36);
-      doc.setTextColor(255,255,255); doc.text("Agro",86,38);
-      doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]); doc.text("Fresh",86+doc.getTextWidth("Agro"),38);
-      doc.setDrawColor(GOLD[0],GOLD[1],GOLD[2]); doc.setLineWidth(0.8); doc.line(18,54,W-18,54);
-      doc.setFont("helvetica","italic"); doc.setFontSize(11);
-      doc.setTextColor(180,210,160);
-      var desc = doc.splitTextToSize("AgroFresh is Saudi Arabia's premier importer of authentic Indian vegetables. Based in Azizia, Riyadh, we deliver India's finest produce daily.",W-40);
-      doc.text(desc,18,64);
-      var stats=[["15+","Years"],["26","Varieties"],["500+","Customers"],["100%","Freshness"]];
-      stats.forEach(function(s,i){
-        var x=18+(i%2)*94, y=90+Math.floor(i/2)*28;
-        doc.setFillColor(35,72,18); doc.roundedRect(x,y,88,22,4,4,"F");
-        doc.setFont("helvetica","bold"); doc.setFontSize(16); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
-        doc.text(s[0],x+10,y+13);
-        doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(180,210,160);
-        doc.text(s[1],x+10,y+19);
-      });
-      doc.setFillColor(35,72,18); doc.roundedRect(18,152,W-36,30,5,5,"F");
-      doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
-      doc.text("MISSION",26,162);
-      doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(255,255,255);
-      doc.text(doc.splitTextToSize("Deliver the freshest Indian vegetables to every household in Saudi Arabia.",82),26,168);
-      doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
-      doc.text("VISION",W/2+8,162);
-      doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(255,255,255);
-      doc.text(doc.splitTextToSize("Become the most trusted name in fresh Indian produce across the GCC.",76),W/2+8,168);
-      doc.setFillColor(20,48,10); doc.rect(0,H-16,W,16,"F");
-      doc.setFont("helvetica","bold"); doc.setFontSize(8); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
-      doc.text("AgroFresh | Azizia, Riyadh | +966 538 916 564",W/2,H-6,{align:"center"});
+        /* ── PAGE 1: Cover ── */
+        doc.setFillColor(GR[0],GR[1],GR[2]); doc.rect(0,0,W,H,"F");
+        doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]); doc.rect(0,0,6,H,"F");
+        doc.addImage(LOGO,"JPEG",18,20,60,24);
+        doc.setFont("helvetica","bold"); doc.setFontSize(36);
+        doc.setTextColor(255,255,255); doc.text("Agro",86,38);
+        doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]); doc.text("Fresh",86+doc.getTextWidth("Agro"),38);
+        doc.setDrawColor(GOLD[0],GOLD[1],GOLD[2]); doc.setLineWidth(0.8); doc.line(18,54,W-18,54);
+        doc.setFont("helvetica","italic"); doc.setFontSize(11); doc.setTextColor(180,210,160);
+        var desc = doc.splitTextToSize("AgroFresh is Saudi Arabia's premier importer of authentic Indian vegetables. Based in Azizia, Riyadh, we deliver India's finest produce daily.",W-40);
+        doc.text(desc,18,64);
+        var stats=[["15+","Years"],["25","Varieties"],["500+","Customers"],["100%","Freshness"]];
+        stats.forEach(function(s,i){
+          var x=18+(i%2)*94, y=90+Math.floor(i/2)*28;
+          doc.setFillColor(35,72,18); doc.roundedRect(x,y,88,22,4,4,"F");
+          doc.setFont("helvetica","bold"); doc.setFontSize(16); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
+          doc.text(s[0],x+10,y+13);
+          doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(180,210,160);
+          doc.text(s[1],x+10,y+19);
+        });
+        doc.setFillColor(35,72,18); doc.roundedRect(18,152,W-36,30,5,5,"F");
+        doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
+        doc.text("MISSION",26,162);
+        doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(255,255,255);
+        doc.text(doc.splitTextToSize("Deliver the freshest Indian vegetables to every household in Saudi Arabia.",82),26,168);
+        doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
+        doc.text("VISION",W/2+8,162);
+        doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(255,255,255);
+        doc.text(doc.splitTextToSize("Become the most trusted name in fresh Indian produce across the GCC.",76),W/2+8,168);
+        doc.setFillColor(20,48,10); doc.rect(0,H-16,W,16,"F");
+        doc.setFont("helvetica","bold"); doc.setFontSize(8); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
+        doc.text("AgroFresh | Azizia, Riyadh | +966 538 916 564 | agrofreshriyadh@gmail.com | www.agrofreshs.com",W/2,H-6,{align:"center"});
 
-      /* Page 2: Products */
-      doc.addPage();
-      doc.setFillColor(GR[0],GR[1],GR[2]); doc.rect(0,0,W,22,"F");
-      doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]); doc.rect(0,0,6,22,"F");
-      doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.setTextColor(255,255,255);
-      doc.text("Product Catalogue",14,15);
-      doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(180,210,160);
-      doc.text("26 Premium Indian Vegetables",W-14,15,{align:"right"});
-      var cols=["PRODUCT","LOCAL NAME","CATEGORY","BENEFIT"];
-      var cw=[52,50,38,46]; var sx=10; var rh=8; var yy=30;
-      doc.setFillColor(GR[0],GR[1],GR[2]); doc.rect(sx,yy,W-20,rh,"F");
-      doc.setFont("helvetica","bold"); doc.setFontSize(8); doc.setTextColor(255,255,255);
-      var xx=sx+3;
-      cols.forEach(function(c,ci){ doc.text(c,xx,yy+5.5); xx+=cw[ci]; });
-      yy+=rh;
-      products.forEach(function(p,ri){
-        if(yy>H-18){ doc.addPage(); doc.setFillColor(GR[0],GR[1],GR[2]); doc.rect(0,0,W,14,"F"); doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]); doc.rect(0,0,6,14,"F"); doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(255,255,255); doc.text("Product Catalogue (cont.)",14,10); yy=22; }
-        doc.setFillColor(ri%2===0?237:247, ri%2===0?245:250, ri%2===0?224:242);
-        doc.rect(sx,yy,W-20,rh,"F");
-        doc.setFont("helvetica","normal"); doc.setFontSize(7.5); doc.setTextColor(40,70,20);
-        var rx=sx+3;
-        [p.name,p.local,p.label,p.tag].forEach(function(v,ci){ doc.text(String(v),rx,yy+5.5,{maxWidth:cw[ci]-4}); rx+=cw[ci]; });
-        yy+=rh;
-      });
+        /* ── PAGE 2: Visual Product Grid ── */
+        doc.addPage();
+        // Header bar
+        doc.setFillColor(GR[0],GR[1],GR[2]); doc.rect(0,0,W,20,"F");
+        doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]); doc.rect(0,0,6,20,"F");
+        doc.addImage(LOGO,"JPEG",9,2,28,16);
+        doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.setTextColor(255,255,255);
+        doc.text("Product Catalogue",44,13);
+        doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
+        doc.text("25 Premium Indian Vegetables",W-10,13,{align:"right"});
 
-      /* Page 3: Contact */
-      doc.addPage();
-      doc.setFillColor(GR[0],GR[1],GR[2]); doc.rect(0,0,W,H,"F");
-      doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]); doc.rect(0,0,6,H,"F");
-      doc.addImage(LOGO,"JPEG",18,18,55,22);
-      doc.setFont("helvetica","bold"); doc.setFontSize(26); doc.setTextColor(255,255,255);
-      doc.text("Contact & Location",18,56);
-      doc.setDrawColor(GOLD[0],GOLD[1],GOLD[2]); doc.setLineWidth(0.8); doc.line(18,62,W-18,62);
-      var contacts=[["Address","Azizia, Riyadh, Saudi Arabia"],["Phone / WhatsApp","+966 538 916 564"],["Market Hours","Sat - Thu: 5:00 AM - 10:00 PM"],["Speciality","Authentic Indian Vegetables & Herbs"],["Supply","Wholesale & Retail - Restaurants Welcome"]];
-      var cy=70;
-      contacts.forEach(function(c){
-        doc.setFillColor(35,72,18); doc.roundedRect(18,cy,W-36,20,4,4,"F");
-        doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]); doc.text(c[0],26,cy+9);
-        doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(255,255,255); doc.text(c[1],26,cy+16);
-        cy+=26;
-      });
-      doc.setFillColor(20,48,10); doc.rect(0,H-16,W,16,"F");
-      doc.setFont("helvetica","bold"); doc.setFontSize(8); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
-      doc.text("AgroFresh - Bringing India's Freshness to Your Table",W/2,H-6,{align:"center"});
+        // Grid config: 5 cols × 5 rows
+        var COLS = 5, ROWS = 5;
+        var marginX = 8, marginY = 24;
+        var gapX = 2, gapY = 2;
+        var cellW = (W - marginX*2 - gapX*(COLS-1)) / COLS;  // ~37.2mm
+        var cellH = (H - marginY - 14 - gapY*(ROWS-1)) / ROWS; // ~48.6mm
+        var imgH = cellH * 0.56;  // image takes 56% of cell height
+        var textY = imgH + 3;     // text starts below image
 
-      doc.save("AgroFresh-Business-Profile.pdf");
-    } catch(err) { alert("PDF error: " + err.message); }
-    ov.classList.remove("show");
-  }, 100);
+        // Category color map
+        var catColor = {
+          "leafy":   [40,120,40],
+          "coconut": [180,120,10],
+          "gourd":   [20,100,60],
+          "root":    [150,80,20],
+          "vegfruit":[60,130,60]
+        };
+
+        products.forEach(function(p, idx) {
+          var col = idx % COLS;
+          var row = Math.floor(idx / COLS);
+          var cx = marginX + col * (cellW + gapX);
+          var cy = marginY + row * (cellH + gapY);
+
+          // Card background
+          doc.setFillColor(252,254,250);
+          doc.roundedRect(cx, cy, cellW, cellH, 2, 2, "F");
+          // Card border
+          var cc = catColor[p.cat] || GR;
+          doc.setDrawColor(cc[0],cc[1],cc[2]);
+          doc.setLineWidth(0.35);
+          doc.roundedRect(cx, cy, cellW, cellH, 2, 2, "S");
+
+          // Product image
+          var imgSrc = p.img.indexOf('http') === 0 ? (imgCache[p.img] || null) : p.img;
+          if (imgSrc) {
+            try {
+              doc.addImage(imgSrc, "JPEG", cx+0.8, cy+0.8, cellW-1.6, imgH-0.8, "", "FAST");
+            } catch(e) {
+              // fallback: colored rect
+              doc.setFillColor(220,240,210); doc.rect(cx+0.8, cy+0.8, cellW-1.6, imgH-0.8, "F");
+            }
+          } else {
+            doc.setFillColor(220,240,210); doc.rect(cx+0.8, cy+0.8, cellW-1.6, imgH-0.8, "F");
+          }
+
+          // Thin divider line
+          doc.setDrawColor(220,235,215); doc.setLineWidth(0.2);
+          doc.line(cx+1, cy+imgH, cx+cellW-1, cy+imgH);
+
+          // Category label (tiny, colored)
+          doc.setFont("helvetica","bold"); doc.setFontSize(5.2);
+          doc.setTextColor(cc[0],cc[1],cc[2]);
+          doc.text(p.label.toUpperCase(), cx+cellW/2, cy+textY+3, {align:"center"});
+
+          // Product name (bold, dark green)
+          doc.setFont("helvetica","bold"); doc.setFontSize(6.8);
+          doc.setTextColor(GR[0],GR[1],GR[2]);
+          var nameLines = doc.splitTextToSize(p.name, cellW-2);
+          doc.text(nameLines, cx+cellW/2, cy+textY+8, {align:"center"});
+
+          // Local name (italic, gray)
+          doc.setFont("helvetica","italic"); doc.setFontSize(5.5);
+          doc.setTextColor(100,110,95);
+          var localLines = doc.splitTextToSize(p.local, cellW-2);
+          doc.text(localLines, cx+cellW/2, cy+textY+13.5, {align:"center"});
+
+          // Tag pill
+          var tagText = p.tag;
+          var tagW = Math.min(doc.getTextWidth(tagText)*1.0+3, cellW-3);
+          var tagX = cx + (cellW-tagW)/2;
+          var tagY = cy + cellH - 5.5;
+          doc.setFillColor(235,248,225);
+          doc.roundedRect(tagX, tagY, tagW, 4.2, 1, 1, "F");
+          doc.setFont("helvetica","bold"); doc.setFontSize(4.8);
+          doc.setTextColor(40,110,30);
+          doc.text(tagText, cx+cellW/2, tagY+3, {align:"center"});
+        });
+
+        // Footer
+        doc.setFillColor(20,48,10); doc.rect(0,H-14,W,14,"F");
+        doc.setFont("helvetica","bold"); doc.setFontSize(7.5); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
+        doc.text("AgroFresh — Bringing India's Freshness to Your Table | Azizia, Riyadh | +966 538 916 564",W/2,H-5,{align:"center"});
+
+        /* ── PAGE 3: Contact ── */
+        doc.addPage();
+        doc.setFillColor(GR[0],GR[1],GR[2]); doc.rect(0,0,W,H,"F");
+        doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]); doc.rect(0,0,6,H,"F");
+        doc.addImage(LOGO,"JPEG",18,18,55,22);
+        doc.setFont("helvetica","bold"); doc.setFontSize(26); doc.setTextColor(255,255,255);
+        doc.text("Contact & Location",18,56);
+        doc.setDrawColor(GOLD[0],GOLD[1],GOLD[2]); doc.setLineWidth(0.8); doc.line(18,62,W-18,62);
+        var contacts=[["Address","Azizia, Riyadh, Saudi Arabia"],["Phone / WhatsApp","+966 538 916 564"],["Email","agrofreshriyadh@gmail.com"],["Website","www.agrofreshs.com"],["Market Hours","Sat - Thu: 5:00 AM - 10:00 PM"],["Speciality","Authentic Indian Vegetables & Herbs"],["Supply","Wholesale & Retail - Restaurants Welcome"]];
+        var cy2=70;
+        contacts.forEach(function(c){
+          doc.setFillColor(35,72,18); doc.roundedRect(18,cy2,W-36,20,4,4,"F");
+          doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]); doc.text(c[0],26,cy2+9);
+          doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(255,255,255); doc.text(c[1],26,cy2+16);
+          cy2+=26;
+        });
+        doc.setFillColor(20,48,10); doc.rect(0,H-16,W,16,"F");
+        doc.setFont("helvetica","bold"); doc.setFontSize(8); doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);
+        doc.text("AgroFresh - Bringing India's Freshness to Your Table",W/2,H-6,{align:"center"});
+
+        doc.save("AgroFresh-Business-Profile.pdf");
+      } catch(err) { alert("PDF error: " + err.message); console.error(err); }
+      ov.classList.remove("show");
+    }, 200);
+  });
 }
-
 /* Init */
 document.getElementById("nav-logo").src = LOGO;
 document.getElementById("ft-logo").src = LOGO;
